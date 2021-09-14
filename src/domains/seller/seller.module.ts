@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Payment } from '../payment/entities/payment.entity';
 import { Seller } from './entities/seller.entity';
@@ -6,6 +6,7 @@ import { SellerService } from './seller.service';
 import { Customer } from '../customer/entities/customer.entity';
 import { SellerController } from './seller.controller';
 import { Wallet } from './entities/wallet.entity';
+import { AuthModule } from '../auth/auth.module';
 
 
 
@@ -17,6 +18,7 @@ import { Wallet } from './entities/wallet.entity';
         Seller, 
         Wallet
     ]),
+    forwardRef(() => AuthModule)
   ],
   controllers: [
     SellerController,

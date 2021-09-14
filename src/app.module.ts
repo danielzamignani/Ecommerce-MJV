@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
+import { AuthModule } from './domains/auth/auth.module';
 import { CustomerModule } from './domains/customer/customer.module';
 import { PaymentModule } from './domains/payment/payment.module';
 import { SellerModule } from './domains/seller/seller.module';
