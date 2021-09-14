@@ -8,31 +8,31 @@ export class CreateDebitCardDTO {
     description: 'Nome do proprietario do cartão',
     example: 'Daniel de Souza Zamignani'
   })
-  ownerName: string;
+  holder: string;
 
   @ApiProperty({
     description: 'Bandeira do cartão',
     example: 'Visa'
   })
-  flag: string;
+  brand: string;
 
   @ApiProperty({
     description: 'Numero do cartão',
     example: '4929465240388137'
   })
-  number: string;
+  cardNumber: string;
 
   @ApiProperty({
     description: 'Validade do cartão',
     example: '13/06/2023'
   })
-  validity: string;
+  expirationDate: string;
 
   @ApiProperty({
     description: 'CVV do cartão',
     example: '123'
   })
-  cvv: string;
+  securityCode: string;
 }
 
 

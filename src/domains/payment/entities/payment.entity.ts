@@ -10,11 +10,8 @@ export class Payment {
     @PrimaryColumn()
     id: string;
 
-    @Column()
-    description: string;
-
     @Column({type: 'int'})
-    value: number;
+    amount: number;
 
     @Column({default: 'Pending'})
     status: string;

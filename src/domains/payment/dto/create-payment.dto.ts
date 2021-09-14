@@ -6,18 +6,11 @@ import { CreateDebitCardDTO } from "./create-debit-card.dto";
 
 export class CreatePaymentDTO {
 
-  
-  @ApiProperty({
-    description: 'Descrição do pagamento',
-    example: 'Não definido ainda'
-  })
-  description: string;
-
   @ApiProperty({
     description: 'Valor do pagamento',
     example: 100.00
   })
-  value: number;
+  amount: number;
 
   @ApiProperty({
     description: 'ID do comprador',
@@ -32,11 +25,11 @@ export class CreatePaymentDTO {
   seller: Seller;
 
   debitCard: {
-    ownerName: string;
-    flag: string;
-    number: string;
-    validity: string; 
-    cvv: string;
+    holder: string;
+    brand: string;
+    cardNumber: string;
+    expirationDate: string; 
+    securityCode: string;
   }
   
 }

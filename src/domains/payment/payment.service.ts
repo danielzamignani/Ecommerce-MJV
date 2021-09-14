@@ -32,11 +32,10 @@ async createPayment(createPaymentDTO: CreatePaymentDTO) {
     Object.assign(payment,
     {
       id,  
-      description: createPaymentDTO.description,
-      value: createPaymentDTO.value,
+      amount: createPaymentDTO.amount,
       customer: createPaymentDTO.customer,
       seller: createPaymentDTO.seller,
-      card
+      debitCard: card
     });
 
     payment = await this.paymentRepository.save(payment);
@@ -59,11 +58,11 @@ async createPayment(createPaymentDTO: CreatePaymentDTO) {
     Object.assign(card,
         {
             id,  
-            ownerName: cardInfo.ownerName,
-            flag: cardInfo.flag,
-            number: cardInfo.number,
-            validity: cardInfo.validity,
-            cvv: cardInfo.cvv,
+            holder: cardInfo.holder,
+            brand: cardInfo.brand,
+            cardNumber: cardInfo.cardNumber,
+            expirationDate: cardInfo.expirationDate,
+            securityCode: cardInfo.securityCode,
         });
 
     card = await this.debitCardRepository.save(card)

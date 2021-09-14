@@ -6,17 +6,17 @@ export class DebitCard {
     id: string;
 
     @Column()
-    ownerName: string;
+    holder: string;
 
     @Column()
-    flag: string;
+    brand: string;
 
     @Column()
-    number: string;
+    cardNumber: string;
 
     @Column()
-    validity: string
+    expirationDate: string
 
     @Column()
-    cvv: string;
+    securityCode: string;
 }
