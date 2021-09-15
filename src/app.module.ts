@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { AuthModule } from './domains/auth/auth.module';
@@ -10,15 +12,14 @@ import { SellerModule } from './domains/seller/seller.module';
   imports: [
     TypeOrmModule.forRootAsync({
       useFactory: async () =>
-      Object.assign(await getConnectionOptions(), 
-      {
-        autoLoadEntities: true,
-      }),
+        Object.assign(await getConnectionOptions(), {
+          autoLoadEntities: true,
+        }),
     }),
     CustomerModule,
     PaymentModule,
     SellerModule,
-  ],  
+  ],
   controllers: [],
   providers: [],
 })

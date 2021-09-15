@@ -8,26 +8,13 @@ import { SellerController } from './seller.controller';
 import { Wallet } from './entities/wallet.entity';
 import { AuthModule } from '../auth/auth.module';
 
-
-
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-        Customer, 
-        Payment, 
-        Seller, 
-        Wallet
-    ]),
-    forwardRef(() => AuthModule)
+    TypeOrmModule.forFeature([Customer, Payment, Seller, Wallet]),
+    forwardRef(() => AuthModule),
   ],
-  controllers: [
-    SellerController,
-  ],
-  providers: [
-    SellerService,
-  ],
-  exports: [
-    SellerService,
-  ],
+  controllers: [SellerController],
+  providers: [SellerService],
+  exports: [SellerService],
 })
 export class SellerModule {}

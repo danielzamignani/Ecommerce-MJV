@@ -1,21 +1,21 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateCustomerDTO {
-  @ApiProperty( {
+  @ApiProperty({
     description: 'Nome do comprador',
-    example: 'Daniel de Souza Zamignani'
-  } )
+    example: 'Daniel de Souza Zamignani',
+  })
   name: string;
 
-  @ApiProperty( {
+  @ApiProperty({
     description: 'Email do comprador',
-    example: 'danielzamignani@email.com'
-  } )
+    example: 'danielzamignani@email.com',
+  })
   email: string;
 
-  @ApiProperty( {
+  @ApiProperty({
     description: 'Senha para a conta',
-    example: 'abcde12345'
-  } )
+    example: 'abcde12345',
+  })
   password: string;
 }

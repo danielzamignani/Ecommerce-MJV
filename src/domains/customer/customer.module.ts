@@ -7,20 +7,13 @@ import { Seller } from '../seller/entities/seller.entity';
 import { CustomerController } from './customer.controller';
 import { AuthModule } from '../auth/auth.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([Customer, Payment, Seller]),
     forwardRef(() => AuthModule),
   ],
-  controllers: [
-    CustomerController,
-  ],
-  providers: [
-    CustomerService,
-  ],
-  exports: [
-    CustomerService,
-  ],
+  controllers: [CustomerController],
+  providers: [CustomerService],
+  exports: [CustomerService],
 })
 export class CustomerModule {}
