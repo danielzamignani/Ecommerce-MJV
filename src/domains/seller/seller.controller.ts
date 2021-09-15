@@ -11,8 +11,20 @@ export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
   @Post()
-  createUser(@Body() createSellerDTO: CreateSellerDTO) {
+  createSeller(@Body() createSellerDTO: CreateSellerDTO) {
     return this.sellerService.createSeller(createSellerDTO);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  async findSellerById(@DecodeJwt() auth: any) {
+    return this.sellerService.findSellerById(auth.id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('payments')
+  async findSellerPayments(@DecodeJwt() auth: any) {
+    return this.sellerService.findSellerPayments(auth.id);
   }
 
   @UseGuards(JwtAuthGuard)

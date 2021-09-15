@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
@@ -34,25 +34,25 @@ export class CustomerService {
     return customer;
   }
 
-  async findCustomerById(id: string) {
+  async findCustomerProfile(id: string) {
     const customer = await this.customerRepository.findOne(id);
 
-    // if(!customer) {
-    //   throw new NotFoundException()
-    // }
-    //
     return customer;
   }
 
+  async findCustomerPayments(id: string) {
+    const customer = await this.customerRepository.findOne(id);
+
+    return customer.payments;
+  }
+
+  //Utilizado na criação do customer e na autenticaçao
+  //Ambos já tem seus proprios tratamentos de erro
   async findCustomerByEmail(email: string) {
     const customer = await this.customerRepository.findOne({
       where: { email: email },
     });
 
-    // if(!customer) {
-    //   throw new NotFoundException()
-    // }
-    //
     return customer;
   }
 }

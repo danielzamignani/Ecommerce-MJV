@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as uuid from 'uuid';
 import { Repository } from 'typeorm';
 import { Seller } from './entities/seller.entity';
 import { CreateSellerDTO } from './dto/create-seller.dto';
 import { Wallet } from './entities/wallet.entity';
+import { EmailAlreadyInUse } from 'src/shared/expcetions/email-in-use.exceptions';
 
 @Injectable()
 export class SellerService {
@@ -14,6 +15,12 @@ export class SellerService {
   private readonly walletRepository: Repository<Wallet>;
 
   async createSeller({ name, email, password }: CreateSellerDTO) {
+    const userAlreadyExists = await this.findSellerByEmail(email);
+
+    if (userAlreadyExists) {
+      throw new EmailAlreadyInUse();
+    }
+
     let seller = new Seller();
 
     const id = uuid.v4();
@@ -31,6 +38,12 @@ export class SellerService {
     seller = await this.sellerRepository.save(seller);
 
     return seller;
+  }
+
+  async findSellerPayments(id: string) {
+    const seller = await this.sellerRepository.findOne(id);
+
+    return seller.payments;
   }
 
   async findSellerById(id: string) {

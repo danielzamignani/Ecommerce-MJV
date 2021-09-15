@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
@@ -49,6 +49,10 @@ export class PaymentService {
 
   async findPaymentById(id: string) {
     const payment = await this.paymentRepository.findOne(id);
+
+    if (!payment) {
+      throw new NotFoundException();
+    }
 
     return payment;
   }
