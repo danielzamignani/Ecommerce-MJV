@@ -6,9 +6,24 @@ import { Payment } from '../payment/entities/payment.entity';
 import { Seller } from '../seller/entities/seller.entity';
 import { CustomerController } from './customer.controller';
 import { AuthModule } from '../auth/auth.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
+    ClientsModule.register([
+      {
+        name: 'LOGHTTP_SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://localhost:5672'],
+          queue: 'log-http',
+          //prefetchCount: 1,
+          queueOptions: {
+            durable: false,
+          },
+        },
+      },
+    ]),
     TypeOrmModule.forFeature([Customer, Payment, Seller]),
     forwardRef(() => AuthModule),
   ],
