@@ -1,18 +1,25 @@
-import { Body, Controller, Get, Inject, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 
+@UseInterceptors(LogHttpInterceptor)
 @ApiTags('Customer')
 @Controller('customer')
 export class CustomerController {
-  constructor(
-    private readonly customerService: CustomerService,
-    @Inject('LOGHTTP_SERVICE') private readonly client: ClientProxy,
-  ) {}
+  constructor(private readonly customerService: CustomerService) {}
 
   @Post()
   createCustomer(@Body() createCustomerDTO: CreateCustomerDTO) {
@@ -29,15 +36,5 @@ export class CustomerController {
   @Get('/payments')
   findCustomerPayments(@DecodeJwt() auth: any) {
     return this.customerService.findCustomerPayments(auth.id);
-  }
-
-  @Get()
-  print() {
-    return this.client.send(
-      {
-        cmd: 'add-subscriber',
-      },
-      'test',
-    );
   }
 }

@@ -8,11 +8,25 @@ import { Payment } from './entities/payment.entity';
 import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
 import { Wallet } from '../seller/entities/wallet.entity';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Customer, Payment, Seller, DebitCard, Wallet]),
     HttpModule,
+    ClientsModule.register([
+      {
+        name: 'LOGHTTP-SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://admin:admin@localhost:5672'],
+          queue: 'loghttp',
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [PaymentController],
   providers: [PaymentService],

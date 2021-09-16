@@ -8,17 +8,21 @@ import {
   UseGuards,
   UseInterceptors,
   HttpException,
+  Inject,
 } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { AxiosResponse } from 'axios';
 import { catchError, map, Observable } from 'rxjs';
 import { cieloHeaderConfig } from 'src/common/config/cielo.config';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
-import { PaymentInterceptor } from 'src/shared/interceptors/payment.interceptors';
+import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
+import { PaymentInterceptor } from 'src/shared/interceptors/payment.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CieloPaymentDTO } from './dto/cielo-payment-dto';
 import { PaymentService } from './payment.service';
 
+@UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
@@ -30,7 +34,7 @@ export class PaymentController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(PaymentInterceptor)
   @Post(':id')
-  async createPayment(
+  createPayment(
     @Body() cieloPaymentDTO: CieloPaymentDTO,
     @Param('id') id: string,
     @DecodeJwt() auth: any,

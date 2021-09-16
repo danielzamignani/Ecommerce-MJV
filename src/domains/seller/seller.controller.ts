@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { ApiTags } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreateSellerDTO } from '../seller/dto/create-seller.dto';
 import { SellerService } from '../seller/seller.service';
 
+@UseInterceptors(LogHttpInterceptor)
 @ApiTags('Seller')
 @Controller('seller')
 export class SellerController {
@@ -17,19 +28,19 @@ export class SellerController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async findSellerById(@DecodeJwt() auth: any) {
+  findSellerById(@DecodeJwt() auth: any) {
     return this.sellerService.findSellerById(auth.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('payments')
-  async findSellerPayments(@DecodeJwt() auth: any) {
+  findSellerPayments(@DecodeJwt() auth: any) {
     return this.sellerService.findSellerPayments(auth.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('wallet')
-  async findSellerWallet(@DecodeJwt() auth: any) {
+  findSellerWallet(@DecodeJwt() auth: any) {
     return this.sellerService.findSellerWallet(auth.id);
   }
 }

@@ -8,6 +8,7 @@ import { LocalStrategy } from './local/local-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './jwt/constants';
 import { JwtStrategy } from './jwt/jwt-strategy';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
@@ -18,6 +19,19 @@ import { JwtStrategy } from './jwt/jwt-strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '300s' },
     }),
+    ClientsModule.register([
+      {
+        name: 'LOGHTTP-SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://admin:admin@localhost:5672'],
+          queue: 'loghttp',
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
   ],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   controllers: [AuthController],

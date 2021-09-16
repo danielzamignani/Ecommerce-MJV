@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ClientsModule } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConnectionOptions } from 'typeorm';
 import { CustomerModule } from './domains/customer/customer.module';
@@ -18,6 +19,7 @@ import { SellerModule } from './domains/seller/seller.module';
     CustomerModule,
     PaymentModule,
     SellerModule,
+    ClientsModule,
   ],
   controllers: [],
   providers: [],

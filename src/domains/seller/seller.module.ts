@@ -7,11 +7,25 @@ import { Customer } from '../customer/entities/customer.entity';
 import { SellerController } from './seller.controller';
 import { Wallet } from './entities/wallet.entity';
 import { AuthModule } from '../auth/auth.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Customer, Payment, Seller, Wallet]),
     forwardRef(() => AuthModule),
+    ClientsModule.register([
+      {
+        name: 'LOGHTTP-SERVICE',
+        transport: Transport.RMQ,
+        options: {
+          urls: ['amqp://admin:admin@localhost:5672'],
+          queue: 'loghttp',
+          queueOptions: {
+            durable: true,
+          },
+        },
+      },
+    ]),
   ],
   controllers: [SellerController],
   providers: [SellerService],

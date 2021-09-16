@@ -12,14 +12,13 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   imports: [
     ClientsModule.register([
       {
-        name: 'LOGHTTP_SERVICE',
+        name: 'LOGHTTP-SERVICE',
         transport: Transport.RMQ,
         options: {
-          urls: ['amqp://localhost:5672'],
-          queue: 'log-http',
-          //prefetchCount: 1,
+          urls: ['amqp://admin:admin@localhost:5672'],
+          queue: 'loghttp',
           queueOptions: {
-            durable: false,
+            durable: true,
           },
         },
       },

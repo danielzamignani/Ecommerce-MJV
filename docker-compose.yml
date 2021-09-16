@@ -23,5 +23,6 @@ services:
       - '15672:15672'
     volumes:
       - ./DOCKER-VOLUMES/rabbitmq:/var/lib/rabbitmq
-    env_file:
-      - ./rabbitmq.env
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
