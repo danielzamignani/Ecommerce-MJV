@@ -9,6 +9,18 @@ async function bootstrap() {
     .setTitle('Ecommerce-MJV')
     .setDescription('Modelo de Ecommerce baseado no desafio de back-end da MJV')
     .setVersion('1.0')
+    .setBasePath('v1')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

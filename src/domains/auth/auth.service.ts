@@ -16,17 +16,13 @@ export class AuthService {
     const customer = await this.customerService.findCustomerByEmail(email);
     const seller = await this.sellerService.findSellerByEmail(email);
 
-    console.log(password);
-
     if (customer) {
       const isMatchCustomer = await bcrypt.compare(password, customer.password);
       if (isMatchCustomer) {
         const { password, ...result } = customer;
         return result;
       }
-    }
-
-    if (seller) {
+    } else if (seller) {
       const isMatchSeller = await bcrypt.compare(password, seller.password);
       if (isMatchSeller) {
         const { password, ...result } = seller;

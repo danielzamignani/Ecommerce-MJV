@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
+import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 import { Repository } from 'typeorm';
 
@@ -21,6 +22,9 @@ export class CustomerService {
     }
 
     let customer = new Customer();
+
+    const saltOrRounds = 10;
+    password = await bcrypt.hash(password, saltOrRounds);
 
     Object.assign(customer, {
       id: uuid.v4(),
