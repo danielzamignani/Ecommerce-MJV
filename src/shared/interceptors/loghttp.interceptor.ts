@@ -27,7 +27,6 @@ export class LogHttpInterceptor implements NestInterceptor {
     };
 
     this.logHttpService.emit('log', logMessage);
-    console.log(logMessage);
 
     return next.handle().pipe();
   }

@@ -20,31 +20,31 @@ export class PaymentService {
   @InjectRepository(Wallet)
   private readonly walletRepository: Repository<Wallet>;
 
-  //  async createPayment(
-  //    cieloPaymentDTO: CreatePaymentDTO,
-  //    sellerId: string,
-  //    customerId: string,
-  //  ) {
-  //    let payment = new Payment();
-  //
-  //    const card = await this.createDebitCard(cieloPaymentDTO.payment.debitCard);
-  //
-  //    const id = uuid.v4();
-  //
-  //    Object.assign(payment, {
-  //      id,
-  //      amount: cieloPaymentDTO.payment.amount,
-  //      seller: sellerId,
-  //      customer: customerId,
-  //      debitCard: card,
-  //    });
-  //
-  //    payment = await this.paymentRepository.save(payment);
-  //
-  //    await this.updateWallet(cieloPaymentDTO.payment.amount, sellerId);
-  //
-  //    return payment;
-  //  }
+  async createPayment(
+    { amount, debitCard }: CreatePaymentDTO,
+    sellerId: string,
+    customerId: string,
+  ) {
+    let payment = new Payment();
+
+    const card = await this.createDebitCard(debitCard);
+
+    const id = uuid.v4();
+
+    Object.assign(payment, {
+      id,
+      amount: amount,
+      seller: sellerId,
+      customer: customerId,
+      debitCard: card,
+    });
+
+    payment = await this.paymentRepository.save(payment);
+
+    await this.updateWallet(amount, sellerId);
+
+    return payment;
+  }
 
   async findPaymentById(id: string) {
     const payment = await this.paymentRepository.findOne(id);

@@ -37,32 +37,23 @@ export class PaymentController {
   ) {}
 
   @UseGuards(JwtAuthGuard)
-  @UseInterceptors(PaymentInterceptor)
+  //@UseInterceptors(PaymentInterceptor)
   @ApiCreatedResponse({ description: 'Create a payment' })
   @ApiBearerAuth('JWT-auth')
   @Post(':id')
   createPayment(
     @Body() createPaymentDTO: CreatePaymentDTO,
-    @Param('id') id: string,
+    @Param('id') sellerId: string,
     @DecodeJwt() auth: any,
   ) {
-    //  const sellerId = id;
-    //  const customerId = auth.id;
-    //
-    //  await this.paymentService.createPayment(
-    //    cieloPaymentDTO,
-    //    sellerId,
-    //    customerId,
-    //  );
-    const response = this.httpService
-      .post(
-        'https://apisandbox.cieloecommerce.cielo.com.br/1/sales/',
-        createPaymentDTO,
-        cieloHeaderConfig,
-      )
-      .pipe(map((response) => response.data as string));
-    console.log(map((response) => response));
-    return response;
+    //return this.httpService
+    //  .post(
+    //    'https://apisandbox.cieloecommerce.cielo.com.br/1/sales/',
+    //    createPaymentDTO,
+    //    cieloHeaderConfig,
+    //  )
+    //  .pipe(map((response) => response.data as string));
+    this.paymentService.createPayment(createPaymentDTO, sellerId, auth.id);
   }
 
   @UseGuards(JwtAuthGuard)
