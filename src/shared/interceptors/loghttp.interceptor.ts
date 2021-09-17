@@ -17,18 +17,16 @@ export class LogHttpInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const method = context.switchToHttp().getRequest().method;
     const url = context.switchToHttp().getRequest().url;
-    const hearders = context.switchToHttp().getRequest().headers;
+    const headers = context.switchToHttp().getRequest().headers;
     const body = context.switchToHttp().getRequest().body;
-
     const logMessage = {
       url,
       method,
-      hearders,
+      headers,
       body,
-      dateHour: Date.now(),
     };
 
-    this.logHttpService.emit({ cmd: 'log' }, logMessage);
+    this.logHttpService.emit('log', logMessage);
     console.log(logMessage);
 
     return next.handle().pipe();

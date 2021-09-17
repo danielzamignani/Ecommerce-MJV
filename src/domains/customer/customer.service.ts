@@ -1,10 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
 import * as uuid from 'uuid';
 import { Repository } from 'typeorm';
-import { EmailAlreadyInUse } from 'src/shared/expcetions/email-in-use.exceptions';
 
 @Injectable()
 export class CustomerService {
@@ -15,15 +14,16 @@ export class CustomerService {
     const userAlreadyExists = await this.findCustomerByEmail(email);
 
     if (userAlreadyExists) {
-      throw new EmailAlreadyInUse();
+      throw new HttpException(
+        'This email is already in use',
+        HttpStatus.CONFLICT,
+      );
     }
 
     let customer = new Customer();
 
-    const id = uuid.v4();
-
     Object.assign(customer, {
-      id,
+      id: uuid.v4(),
       name,
       email,
       password,

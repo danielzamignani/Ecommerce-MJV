@@ -19,6 +19,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         transport: Transport.RMQ,
         options: {
           urls: ['amqp://admin:admin@localhost:5672'],
+          prefetchCount: 1,
           queue: 'loghttp',
           queueOptions: {
             durable: true,

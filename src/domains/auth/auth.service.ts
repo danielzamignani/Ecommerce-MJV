@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CustomerService } from '../customer/customer.service';
 import { SellerService } from '../seller/seller.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -15,14 +16,28 @@ export class AuthService {
     const customer = await this.customerService.findCustomerByEmail(email);
     const seller = await this.sellerService.findSellerByEmail(email);
 
-    if (customer && customer.password === password) {
-      const { password, ...result } = customer;
-      return result;
-    } else if (seller && seller.password === password) {
-      const { password, ...result } = seller;
-      return result;
+    console.log(password);
+
+    if (customer) {
+      const isMatchCustomer = await bcrypt.compare(password, customer.password);
+      if (isMatchCustomer) {
+        const { password, ...result } = customer;
+        return result;
+      }
     }
-    return null;
+
+    if (seller) {
+      const isMatchSeller = await bcrypt.compare(password, seller.password);
+      if (isMatchSeller) {
+        const { password, ...result } = seller;
+        return result;
+      }
+    }
+
+    throw new HttpException(
+      'Email or Password incorrect',
+      HttpStatus.UNAUTHORIZED,
+    );
   }
 
   async login(user: any) {

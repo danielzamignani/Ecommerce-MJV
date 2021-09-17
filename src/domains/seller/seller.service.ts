@@ -1,11 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 import { Repository } from 'typeorm';
 import { Seller } from './entities/seller.entity';
 import { CreateSellerDTO } from './dto/create-seller.dto';
 import { Wallet } from './entities/wallet.entity';
-import { EmailAlreadyInUse } from 'src/shared/expcetions/email-in-use.exceptions';
 
 @Injectable()
 export class SellerService {
@@ -18,7 +18,10 @@ export class SellerService {
     const userAlreadyExists = await this.findSellerByEmail(email);
 
     if (userAlreadyExists) {
-      throw new EmailAlreadyInUse();
+      throw new HttpException(
+        'This email is already in use',
+        HttpStatus.CONFLICT,
+      );
     }
 
     let seller = new Seller();
@@ -26,6 +29,9 @@ export class SellerService {
     const id = uuid.v4();
 
     const wallet = await this.createWallet(name);
+
+    const saltOrRounds = 10;
+    password = await bcrypt.hash(password, saltOrRounds);
 
     Object.assign(seller, {
       id,
