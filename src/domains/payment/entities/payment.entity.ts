@@ -14,7 +14,7 @@ import { DebitCard } from './debit-card.entity';
 @Entity()
 export class Payment {
   @PrimaryColumn()
-  id: string;
+  orderId: string;
 
   @Column({ type: 'int' })
   amount: number;

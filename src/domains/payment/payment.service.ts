@@ -8,6 +8,7 @@ import { CreateDebitCardDTO } from './dto/create-debit-card.dto';
 import { Seller } from '../seller/entities/seller.entity';
 import { Wallet } from '../seller/entities/wallet.entity';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
+import { Transaction } from './entities/transaction.entity';
 
 @Injectable()
 export class PaymentService {
@@ -19,21 +20,22 @@ export class PaymentService {
   private readonly debitCardRepository: Repository<DebitCard>;
   @InjectRepository(Wallet)
   private readonly walletRepository: Repository<Wallet>;
+  @InjectRepository(Transaction)
+  private readonly transactionRepository: Repository<Transaction>;
 
   async createPayment(
-    { amount, debitCard }: CreatePaymentDTO,
-    sellerId: string,
+    { amount, debitCard, sellerId }: CreatePaymentDTO,
     customerId: string,
   ) {
     let payment = new Payment();
 
     const card = await this.createDebitCard(debitCard);
 
-    const id = uuid.v4();
+    const orderId = uuid.v4();
 
     Object.assign(payment, {
-      id,
-      amount: amount,
+      orderId,
+      amount,
       seller: sellerId,
       customer: customerId,
       debitCard: card,
@@ -41,19 +43,27 @@ export class PaymentService {
 
     payment = await this.paymentRepository.save(payment);
 
-    await this.updateWallet(amount, sellerId);
+    const cieloRequest = {
+      MerchantOrderId: orderId,
+      Customer: {
+        Name: 'Test',
+      },
+      Payment: {
+        Type: 'DebitCard',
+        Authenticate: true,
+        Amount: amount,
+        ReturnUrl: 'http://api.webhookinbox.com/i/1i5Y6dOc/in/',
+        DebitCard: {
+          CardNumber: card.cardNumber,
+          Holder: card.holder,
+          ExpirationDate: card.expirationDate,
+          SecurityCode: card.securityCode,
+          Brand: card.brand,
+        },
+      },
+    };
 
-    return payment;
-  }
-
-  async findPaymentById(id: string) {
-    const payment = await this.paymentRepository.findOne(id);
-
-    if (!payment) {
-      throw new NotFoundException();
-    }
-
-    return payment;
+    return cieloRequest;
   }
 
   async createDebitCard(cardInfo: CreateDebitCardDTO) {
@@ -75,12 +85,40 @@ export class PaymentService {
     return card;
   }
 
-  async updateWallet(amount: number, sellerId: string) {
-    const seller = await this.sellerRepository.findOne(sellerId);
-    const wallet = await this.walletRepository.findOne(seller.wallet.id);
+  // async validatePayment(id: string) {
+  //   const payment = await this.findPaymentById(id);
+  //   payment.status = 'APROVED';
+  //
+  //   this.paymentRepository.update({ id: id }, update);
+  // }
 
-    wallet.amount += amount;
+  //  async updateWallet(amount: number, sellerId: string, paymentId: string) {
+  //    let transaction = new Transaction();
+  //
+  //    const id = uuid.v4();
+  //    Object.assign(transaction, {
+  //      id,
+  //      amount,
+  //      paymentId,
+  //    });
+  //
+  //    transaction = await this.transactionRepository.save(transaction);
+  //
+  //    const seller = await this.sellerRepository.findOne(sellerId);
+  //    const wallet = await this.walletRepository.findOne(seller.wallet.id);
+  //    wallet.amount += amount;
+  //
+  //    await this.walletRepository.save(wallet);
+  //  }
+  //
 
-    await this.walletRepository.save(wallet);
+  async findPaymentById(id: string) {
+    const payment = await this.paymentRepository.findOne(id);
+
+    if (!payment) {
+      throw new NotFoundException();
+    }
+
+    return payment;
   }
 }

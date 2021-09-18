@@ -9,10 +9,18 @@ import { PaymentController } from './payment.controller';
 import { PaymentService } from './payment.service';
 import { Wallet } from '../seller/entities/wallet.entity';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { Transaction } from './entities/transaction.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Customer, Payment, Seller, DebitCard, Wallet]),
+    TypeOrmModule.forFeature([
+      Customer,
+      Payment,
+      Seller,
+      DebitCard,
+      Wallet,
+      Transaction,
+    ]),
     HttpModule,
     ClientsModule.register([
       {

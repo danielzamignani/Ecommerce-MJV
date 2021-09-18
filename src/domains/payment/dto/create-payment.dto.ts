@@ -12,7 +12,7 @@ export class CreatePaymentDTO {
     description: 'ID do vendedor',
     example: 'f147c144-1692-4a77-adcf-f03b29a0b5ee',
   })
-  seller: string;
+  sellerId: string;
 
   @ApiProperty({
     description: 'Cartão de Debito',
