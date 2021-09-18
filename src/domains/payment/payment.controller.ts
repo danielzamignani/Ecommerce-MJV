@@ -57,27 +57,27 @@ export class PaymentController {
         return error;
       });
 
-    return response.data.Payment.Status;
+    return response.data;
   }
 
-  //@Post(':id')
-  //validatePayment(@Param('id') id: string) {
-  //  const response = await axios
-  //    .get(
-  //      `https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/${id}`,
-  //      cieloHeaderConfig,
-  //    )
-  //    .then(function (response) {
-  //      return response;
-  //    })
-  //    .catch(function (error) {
-  //      return error;
-  //    });
-  //
-  //  if (response.data.Payment.Status === 2) {
-  //    return this.paymentService.validatePayment(id);
-  //  }
-  //}
+  @Post(':id')
+  async validatePayment(@Param('id') id: string) {
+    const response = await axios
+      .get(
+        `https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/${id}`,
+        cieloHeaderConfig,
+      )
+      .then(function (response) {
+        if (response.data.Payment.Status === 2) return response;
+      })
+      .catch(function (error) {
+        return error;
+      });
+
+    const orderId = response.data.MerchantOrderId;
+
+    return this.paymentService.validatePayment(orderId);
+  }
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Find payment by ID' })

@@ -9,19 +9,17 @@ import { Seller } from '../seller/entities/seller.entity';
 import { Wallet } from '../seller/entities/wallet.entity';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { Transaction } from './entities/transaction.entity';
+import { SellerService } from '../seller/seller.service';
 
 @Injectable()
 export class PaymentService {
-  @InjectRepository(Seller)
-  private readonly sellerRepository: Repository<Seller>;
   @InjectRepository(Payment)
   private readonly paymentRepository: Repository<Payment>;
   @InjectRepository(DebitCard)
   private readonly debitCardRepository: Repository<DebitCard>;
-  @InjectRepository(Wallet)
-  private readonly walletRepository: Repository<Wallet>;
   @InjectRepository(Transaction)
   private readonly transactionRepository: Repository<Transaction>;
+  private readonly sellerService: SellerService;
 
   async createPayment(
     { amount, debitCard, sellerId }: CreatePaymentDTO,
@@ -52,7 +50,7 @@ export class PaymentService {
         Type: 'DebitCard',
         Authenticate: true,
         Amount: amount,
-        ReturnUrl: 'http://api.webhookinbox.com/i/1i5Y6dOc/in/',
+        ReturnUrl: 'http://api.webhookinbox.com/i/92xF8thO/in/',
         DebitCard: {
           CardNumber: card.cardNumber,
           Holder: card.holder,
@@ -85,32 +83,30 @@ export class PaymentService {
     return card;
   }
 
-  // async validatePayment(id: string) {
-  //   const payment = await this.findPaymentById(id);
-  //   payment.status = 'APROVED';
-  //
-  //   this.paymentRepository.update({ id: id }, update);
-  // }
+  async validatePayment(id: string) {
+    /*MUDANDO STATUS DO PAYMENT*/
+    let payment = await this.findPaymentById(id);
+    payment.status = 'Approved';
 
-  //  async updateWallet(amount: number, sellerId: string, paymentId: string) {
-  //    let transaction = new Transaction();
-  //
-  //    const id = uuid.v4();
-  //    Object.assign(transaction, {
-  //      id,
-  //      amount,
-  //      paymentId,
-  //    });
-  //
-  //    transaction = await this.transactionRepository.save(transaction);
-  //
-  //    const seller = await this.sellerRepository.findOne(sellerId);
-  //    const wallet = await this.walletRepository.findOne(seller.wallet.id);
-  //    wallet.amount += amount;
-  //
-  //    await this.walletRepository.save(wallet);
-  //  }
-  //
+    payment = await this.paymentRepository.save(payment);
+
+    return payment;
+  }
+
+  async createTransaction(amount: number, orderId: string, wallet: Wallet) {
+    const transaction = new Transaction();
+
+    const id = uuid.v4();
+
+    Object.assign(transaction, {
+      id,
+      amount,
+      orderId,
+      wallet,
+    });
+
+    this.transactionRepository.save(transaction);
+  }
 
   async findPaymentById(id: string) {
     const payment = await this.paymentRepository.findOne(id);

@@ -10,7 +10,7 @@ export class Transaction {
   amount: number;
 
   @Column()
-  paymentId: string;
+  orderId: string;
 
   @ManyToOne((type) => Wallet, (wallet) => wallet.transaction)
   wallet: Wallet;
