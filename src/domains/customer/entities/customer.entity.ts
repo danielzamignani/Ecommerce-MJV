@@ -21,7 +21,7 @@ export class Customer {
   @Column()
   password: string;
 
-  @OneToMany((type) => Payment, (payment) => payment.customer, { eager: true })
+  @OneToMany((type) => Payment, (payment) => payment.customer)
   payments: Payment[];
 
   @CreateDateColumn()

@@ -31,7 +31,7 @@ export class Seller {
   @JoinColumn()
   wallet: Wallet;
 
-  @OneToMany((type) => Payment, (payment) => payment.customer, { eager: true })
+  @OneToMany((type) => Payment, (payment) => payment.seller)
   payments: Payment[];
 
   @CreateDateColumn()

@@ -22,10 +22,12 @@ export class Payment {
   @Column({ default: 'Pending' })
   status: string;
 
-  @ManyToOne((type) => Customer, (customer) => customer.payments)
+  @ManyToOne((type) => Customer, (customer) => customer.payments, {
+    eager: true,
+  })
   customer: Customer;
 
-  @ManyToOne((type) => Seller, (seller) => seller.payments)
+  @ManyToOne((type) => Seller, (seller) => seller.payments, { eager: true })
   seller: Seller;
 
   @OneToOne(() => DebitCard, { eager: true })
