@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Seller } from './entities/seller.entity';
 import { CreateSellerDTO } from './dto/create-seller.dto';
 import { Wallet } from './entities/wallet.entity';
+import { Payment } from '../payment/entities/payment.entity';
 
 @Injectable()
 export class SellerService {
@@ -13,6 +14,8 @@ export class SellerService {
   private readonly sellerRepository: Repository<Seller>;
   @InjectRepository(Wallet)
   private readonly walletRepository: Repository<Wallet>;
+  @InjectRepository(Payment)
+  private readonly paymentRepository: Repository<Payment>;
 
   async createSeller({ name, email, password }: CreateSellerDTO) {
     const userAlreadyExists = await this.findSellerByEmail(email);
@@ -49,7 +52,11 @@ export class SellerService {
   async findSellerPayments(id: string) {
     const seller = await this.sellerRepository.findOne(id);
 
-    return seller.payments;
+    const payments = await this.paymentRepository.find({
+      where: { seller: seller },
+    });
+
+    return payments;
   }
 
   async findSellerById(id: string) {

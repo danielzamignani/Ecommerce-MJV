@@ -56,6 +56,9 @@ export class PaymentController {
     return response.data;
   }
 
+  @UseGuards(JwtAuthGuard)
+  @ApiCreatedResponse({ description: 'Validate the payment' })
+  @ApiBearerAuth('JWT-auth')
   @Post('validation/:id')
   async validatePayment(@Param('id') id: string) {
     console.log(`${cieloURLGet}${id}`);

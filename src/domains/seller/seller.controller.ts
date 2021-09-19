@@ -41,7 +41,7 @@ export class SellerController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: 'Show seller payments' })
+  @ApiOkResponse({ description: 'Show all seller payments' })
   @ApiBearerAuth('JWT-auth')
   @Get('payments')
   findSellerPayments(@DecodeJwt() auth: any) {
