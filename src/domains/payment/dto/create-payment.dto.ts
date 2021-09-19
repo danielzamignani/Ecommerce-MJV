@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { DebitCard } from '../entities/debit-card.entity';
+import { CreateDebitCardDTO } from './create-debit-card.dto';
 
 export class CreatePaymentDTO {
   @ApiProperty({
@@ -17,11 +19,5 @@ export class CreatePaymentDTO {
     description: 'Cartão de Debito',
     example: 'Infos do cartão',
   })
-  debitCard: {
-    holder: string;
-    brand: string;
-    cardNumber: string;
-    expirationDate: string;
-    securityCode: string;
-  };
+  debitCard: CreateDebitCardDTO;
 }
