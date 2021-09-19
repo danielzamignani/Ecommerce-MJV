@@ -15,9 +15,6 @@ export class Seller {
   @PrimaryColumn()
   id: string;
 
-  @Column({ type: 'boolean', default: true })
-  isAdmin: true;
-
   @Column()
   name: string;
 
@@ -34,6 +31,9 @@ export class Seller {
   @OneToMany((type) => Payment, (payment) => payment.seller)
   payments: Payment[];
 
-  @Column()
+  @Column({ default: 'Seller' })
+  accountType: string;
+
+  @CreateDateColumn()
   created_at: Date;
 }

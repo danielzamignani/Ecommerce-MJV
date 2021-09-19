@@ -4,17 +4,21 @@ import { CustomerModule } from '../customer/customer.module';
 import { SellerModule } from '../seller/seller.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { LocalStrategy } from './local/local-strategy';
+import { CustomerStrategy } from './local/customer-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './jwt/constants';
-import { JwtStrategy } from './jwt/jwt-strategy';
+
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { SellerStrategy } from './local/seller-strategy';
+import { Customer } from '../customer/entities/customer.entity';
+import { Seller } from '../seller/entities/seller.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtStrategy } from './jwt/jwt-strategy';
 
 @Module({
   imports: [
-    forwardRef(() => CustomerModule),
-    forwardRef(() => SellerModule),
     PassportModule,
+    TypeOrmModule.forFeature([Customer, Seller]),
     JwtModule.register({
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '300s' },
@@ -35,7 +39,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
       },
     ]),
   ],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, CustomerStrategy, SellerStrategy, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService],
 })

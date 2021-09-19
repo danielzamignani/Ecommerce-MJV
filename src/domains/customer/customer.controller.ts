@@ -15,6 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CustomerService } from './customer.service';
@@ -33,7 +34,7 @@ export class CustomerController {
     return this.customerService.createCustomer(createCustomerDTO);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiOkResponse({ description: 'Show customer profile' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
@@ -42,7 +43,7 @@ export class CustomerController {
     return this.customerService.findCustomerById(auth.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiOkResponse({ description: 'Show all customer payments' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')

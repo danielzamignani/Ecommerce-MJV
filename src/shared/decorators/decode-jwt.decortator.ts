@@ -7,7 +7,7 @@ export const DecodeJwt = createParamDecorator(
       .switchToHttp()
       .getRequest()
       .headers.authorization.replace('Bearer ', '');
-    const response = jwt_decode(jwt);
-    return response;
+    const user = jwt_decode(jwt);
+    return user;
   },
 );

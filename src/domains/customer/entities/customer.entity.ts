@@ -24,6 +24,9 @@ export class Customer {
   @OneToMany((type) => Payment, (payment) => payment.customer)
   payments: Payment[];
 
+  @Column({ default: 'Customer' })
+  accountType: string;
+
   @CreateDateColumn()
   created_at: Date;
 }

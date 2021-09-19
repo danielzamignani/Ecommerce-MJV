@@ -27,7 +27,7 @@ export class PaymentService {
   private readonly sellerRepository: Repository<Seller>;
 
   async createPayment(
-    { amount, debitCard, sellerId }: CreatePaymentDTO,
+    { amount, debitCard, sellerId, customerName }: CreatePaymentDTO,
     customerId: string,
   ) {
     /**Verificando o vendedor */
@@ -56,7 +56,7 @@ export class PaymentService {
     const cieloPostDTO: CieloPostDTO = {
       MerchantOrderId: orderId,
       Customer: {
-        Name: payment.seller.name,
+        Name: customerName,
       },
       Payment: {
         Type: 'DebitCard',

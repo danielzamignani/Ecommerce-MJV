@@ -27,6 +27,7 @@ import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { PaymentService } from './payment.service';
 import axios from 'axios';
+import { CustomerGuard } from 'src/shared/guards/customer.guard';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
@@ -34,7 +35,7 @@ import axios from 'axios';
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiCreatedResponse({ description: 'Create a payment' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
@@ -61,7 +62,6 @@ export class PaymentController {
     return response.data;
   }
 
-  @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ description: 'Validate the payment' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')

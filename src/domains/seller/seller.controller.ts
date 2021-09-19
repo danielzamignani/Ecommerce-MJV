@@ -15,6 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { SellerGuard } from 'src/shared/guards/seller.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreateSellerDTO } from '../seller/dto/create-seller.dto';
@@ -33,7 +34,7 @@ export class SellerController {
     return this.sellerService.createSeller(createSellerDTO);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, SellerGuard)
   @ApiOkResponse({ description: 'Show seller profile' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
@@ -42,7 +43,7 @@ export class SellerController {
     return this.sellerService.findSellerById(auth.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, SellerGuard)
   @ApiOkResponse({ description: 'Show all seller payments' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
@@ -51,7 +52,7 @@ export class SellerController {
     return this.sellerService.findSellerPayments(auth.id);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, SellerGuard)
   @ApiOkResponse({ description: 'Show seller wallet' })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')

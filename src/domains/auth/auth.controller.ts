@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import {
   ApiBody,
   ApiOkResponse,
@@ -22,12 +23,21 @@ import { LocalAuthGuard } from './local/local-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @UseGuards(LocalAuthGuard)
+  @UseGuards(AuthGuard('customerStrategy'))
   @ApiBody({ type: LoginDTO })
-  @ApiOkResponse({ description: 'Login account' })
+  @ApiOkResponse({ description: 'Login customer account' })
   @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
-  @Post()
-  async login(@Request() req: any) {
+  @Post('/customer')
+  async loginCustomer(@Request() req: any) {
+    return this.authService.login(req.user);
+  }
+
+  @UseGuards(AuthGuard('sellerStrategy'))
+  @ApiBody({ type: LoginDTO })
+  @ApiOkResponse({ description: 'Login seller account' })
+  @ApiUnauthorizedResponse({ description: 'Invalid credentials' })
+  @Post('/seller')
+  async loginSeller(@Request() req: any) {
     return this.authService.login(req.user);
   }
 }

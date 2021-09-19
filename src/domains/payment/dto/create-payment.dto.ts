@@ -1,8 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { DebitCard } from '../entities/debit-card.entity';
 import { CreateDebitCardDTO } from './create-debit-card.dto';
 
 export class CreatePaymentDTO {
+  @ApiProperty({
+    description: 'Nome do comprador',
+    example: 'Daniel Souza',
+  })
+  customerName: string;
+
   @ApiProperty({
     description: 'Valor do pagamento',
     example: 100.0,
