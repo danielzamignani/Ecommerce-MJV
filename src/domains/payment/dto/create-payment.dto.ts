@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Seller } from 'src/domains/seller/entities/seller.entity';
 
 export class CreatePaymentDTO {
   @ApiProperty({

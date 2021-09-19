@@ -2,12 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Post,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
 import {
   ApiBearerAuth,
   ApiConflictResponse,

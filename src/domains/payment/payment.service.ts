@@ -5,11 +5,11 @@ import { Payment } from './entities/payment.entity';
 import * as uuid from 'uuid';
 import { DebitCard } from './entities/debit-card.entity';
 import { CreateDebitCardDTO } from './dto/create-debit-card.dto';
-import { Seller } from '../seller/entities/seller.entity';
 import { Wallet } from '../seller/entities/wallet.entity';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { Transaction } from './entities/transaction.entity';
-import { SellerService } from '../seller/seller.service';
+import { webHook } from 'src/common/config/webhook.config';
+import { CieloPostDTO } from './dto/cielo-post.dto';
 
 @Injectable()
 export class PaymentService {
@@ -19,7 +19,8 @@ export class PaymentService {
   private readonly debitCardRepository: Repository<DebitCard>;
   @InjectRepository(Transaction)
   private readonly transactionRepository: Repository<Transaction>;
-  private readonly sellerService: SellerService;
+  @InjectRepository(Wallet)
+  private readonly walletRepository: Repository<Wallet>;
 
   async createPayment(
     { amount, debitCard, sellerId }: CreatePaymentDTO,
@@ -41,16 +42,16 @@ export class PaymentService {
 
     payment = await this.paymentRepository.save(payment);
 
-    const cieloRequest = {
+    const cieloPostDTO: CieloPostDTO = {
       MerchantOrderId: orderId,
       Customer: {
-        Name: 'Test',
+        Name: payment.seller.name,
       },
       Payment: {
         Type: 'DebitCard',
         Authenticate: true,
         Amount: amount,
-        ReturnUrl: 'http://api.webhookinbox.com/i/92xF8thO/in/',
+        ReturnUrl: webHook,
         DebitCard: {
           CardNumber: card.cardNumber,
           Holder: card.holder,
@@ -61,7 +62,7 @@ export class PaymentService {
       },
     };
 
-    return cieloRequest;
+    return cieloPostDTO;
   }
 
   async createDebitCard(cardInfo: CreateDebitCardDTO) {
@@ -84,11 +85,21 @@ export class PaymentService {
   }
 
   async validatePayment(id: string) {
-    /*MUDANDO STATUS DO PAYMENT*/
+    /**MUDANDO STATUS DO PAYMENT*/
     let payment = await this.findPaymentById(id);
     payment.status = 'Approved';
 
     payment = await this.paymentRepository.save(payment);
+
+    /**ADICIONAR VALOR A WALLET*/
+    const sellerWallet = payment.seller.wallet;
+    sellerWallet.amount += payment.amount;
+
+    await this.walletRepository.save(sellerWallet);
+
+    /**CRIAR TRANSACTION */
+
+    await this.createTransaction(payment.amount, payment.orderId, sellerWallet);
 
     return payment;
   }

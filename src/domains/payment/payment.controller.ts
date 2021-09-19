@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios';
 import {
   Controller,
   Get,
@@ -7,7 +6,6 @@ import {
   Param,
   UseGuards,
   UseInterceptors,
-  Response,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -15,10 +13,13 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { cieloHeaderConfig } from 'src/common/config/cielo.config';
+import {
+  cieloHeaderConfig,
+  cieloURLGet,
+  cieloURLPost,
+} from 'src/common/config/cielo.config';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
-import { PaymentInterceptor } from 'src/shared/interceptors/payment.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { PaymentService } from './payment.service';
@@ -32,24 +33,19 @@ export class PaymentController {
 
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ description: 'Create a payment' })
-  @UseInterceptors(PaymentInterceptor)
   @ApiBearerAuth('JWT-auth')
   @Post()
   async createPayment(
     @Body() createPaymentDTO: CreatePaymentDTO,
     @DecodeJwt() auth: any,
   ) {
-    const cieloRequest = await this.paymentService.createPayment(
+    const cieloPostDTO = await this.paymentService.createPayment(
       createPaymentDTO,
       auth.id,
     );
 
     const response = await axios
-      .post(
-        'https://apisandbox.cieloecommerce.cielo.com.br/1/sales/',
-        cieloRequest,
-        cieloHeaderConfig,
-      )
+      .post(cieloURLPost, cieloPostDTO, cieloHeaderConfig)
       .then(function (response) {
         return response;
       })
@@ -60,13 +56,11 @@ export class PaymentController {
     return response.data;
   }
 
-  @Post(':id')
+  @Post('validation/:id')
   async validatePayment(@Param('id') id: string) {
+    console.log(`${cieloURLGet}${id}`);
     const response = await axios
-      .get(
-        `https://apiquerysandbox.cieloecommerce.cielo.com.br/1/sales/${id}`,
-        cieloHeaderConfig,
-      )
+      .get(`${cieloURLGet}${id}`, cieloHeaderConfig)
       .then(function (response) {
         if (response.data.Payment.Status === 2) return response;
       })
