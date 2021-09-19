@@ -10,6 +10,8 @@ import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { Transaction } from './entities/transaction.entity';
 import { webHook } from 'src/common/config/webhook.config';
 import { CieloPostDTO } from './dto/cielo-post.dto';
+import { Seller } from '../seller/entities/seller.entity';
+import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PaymentService {
@@ -21,11 +23,20 @@ export class PaymentService {
   private readonly transactionRepository: Repository<Transaction>;
   @InjectRepository(Wallet)
   private readonly walletRepository: Repository<Wallet>;
+  @InjectRepository(Seller)
+  private readonly sellerRepository: Repository<Seller>;
 
   async createPayment(
     { amount, debitCard, sellerId }: CreatePaymentDTO,
     customerId: string,
   ) {
+    /**Verificando o vendedor */
+    const seller = await this.sellerRepository.findOne(sellerId);
+
+    if (!seller) {
+      throw new NotFoundException('Seller Not Found!');
+    }
+
     let payment = new Payment();
 
     const card = await this.createDebitCard(debitCard);
@@ -85,19 +96,19 @@ export class PaymentService {
   }
 
   async validatePayment(id: string) {
-    /**MUDANDO STATUS DO PAYMENT*/
+    /**Mudando o status do pagamento*/
     let payment = await this.findPaymentById(id);
     payment.status = 'Approved';
 
     payment = await this.paymentRepository.save(payment);
 
-    /**ADICIONAR VALOR A WALLET*/
+    /**Adicionando valor a carteira*/
     const sellerWallet = payment.seller.wallet;
     sellerWallet.amount += payment.amount;
 
     await this.walletRepository.save(sellerWallet);
 
-    /**CRIAR TRANSACTION */
+    /**Salvando a transação*/
 
     await this.createTransaction(payment.amount, payment.orderId, sellerWallet);
 
@@ -123,7 +134,7 @@ export class PaymentService {
     const payment = await this.paymentRepository.findOne(id);
 
     if (!payment) {
-      throw new NotFoundException();
+      throw new NotFoundException('Payment Not Found!');
     }
 
     return payment;

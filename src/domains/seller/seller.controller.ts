@@ -12,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
@@ -34,6 +35,7 @@ export class SellerController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Show seller profile' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
   findSellerById(@DecodeJwt() auth: any) {
@@ -42,6 +44,7 @@ export class SellerController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Show all seller payments' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('payments')
   findSellerPayments(@DecodeJwt() auth: any) {
@@ -50,6 +53,7 @@ export class SellerController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Show seller wallet' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('wallet')
   findSellerWallet(@DecodeJwt() auth: any) {

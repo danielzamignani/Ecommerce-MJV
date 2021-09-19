@@ -6,12 +6,15 @@ import {
   Param,
   UseGuards,
   UseInterceptors,
+  Patch,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import {
   cieloHeaderConfig,
@@ -33,16 +36,18 @@ export class PaymentController {
 
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ description: 'Create a payment' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Post()
   async createPayment(
     @Body() createPaymentDTO: CreatePaymentDTO,
     @DecodeJwt() auth: any,
   ) {
-    const cieloPostDTO = await this.paymentService.createPayment(
-      createPaymentDTO,
-      auth.id,
-    );
+    const cieloPostDTO = await this.paymentService
+      .createPayment(createPaymentDTO, auth.id)
+      .then(function (cieloPostDTO) {
+        return cieloPostDTO;
+      });
 
     const response = await axios
       .post(cieloURLPost, cieloPostDTO, cieloHeaderConfig)
@@ -58,14 +63,17 @@ export class PaymentController {
 
   @UseGuards(JwtAuthGuard)
   @ApiCreatedResponse({ description: 'Validate the payment' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
-  @Post('validation/:id')
+  @Patch('validation/:id')
   async validatePayment(@Param('id') id: string) {
     console.log(`${cieloURLGet}${id}`);
     const response = await axios
       .get(`${cieloURLGet}${id}`, cieloHeaderConfig)
       .then(function (response) {
-        if (response.data.Payment.Status === 2) return response;
+        if (response.data.Payment.Status === 2) {
+          return response;
+        }
       })
       .catch(function (error) {
         return error;
@@ -78,6 +86,8 @@ export class PaymentController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Find payment by ID' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
+  @ApiNotFoundResponse({ description: 'Payment Not Found!' })
   @ApiBearerAuth('JWT-auth')
   @Get(':id')
   findPaymentById(@Param('id') id: string) {

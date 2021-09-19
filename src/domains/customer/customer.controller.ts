@@ -12,6 +12,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
@@ -34,14 +35,16 @@ export class CustomerController {
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Show customer profile' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/profile')
-  findCustomerProfile(@DecodeJwt() auth: any) {
-    return this.customerService.findCustomerProfile(auth.id);
+  findCustomerById(@DecodeJwt() auth: any) {
+    return this.customerService.findCustomerById(auth.id);
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ description: 'Show all customer payments' })
+  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/payments')
   findCustomerPayments(@DecodeJwt() auth: any) {

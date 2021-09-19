@@ -34,6 +34,6 @@ export class Seller {
   @OneToMany((type) => Payment, (payment) => payment.seller)
   payments: Payment[];
 
-  @CreateDateColumn()
+  @Column()
   created_at: Date;
 }

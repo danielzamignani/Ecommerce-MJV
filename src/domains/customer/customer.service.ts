@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 import { Customer } from './entities/customer.entity';
@@ -18,10 +23,7 @@ export class CustomerService {
     const userAlreadyExists = await this.findCustomerByEmail(email);
 
     if (userAlreadyExists) {
-      throw new HttpException(
-        'This email is already in use',
-        HttpStatus.CONFLICT,
-      );
+      throw new ConflictException('This email is already in use');
     }
 
     let customer = new Customer();
@@ -41,7 +43,7 @@ export class CustomerService {
     return customer;
   }
 
-  async findCustomerProfile(id: string) {
+  async findCustomerById(id: string) {
     const customer = await this.customerRepository.findOne(id);
 
     return customer;
@@ -57,8 +59,6 @@ export class CustomerService {
     return payments;
   }
 
-  //Utilizado na criação do customer e na autenticaçao
-  //Ambos já tem seus proprios tratamentos de erro
   async findCustomerByEmail(email: string) {
     const customer = await this.customerRepository.findOne({
       where: { email: email },

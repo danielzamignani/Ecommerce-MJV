@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
@@ -21,10 +26,7 @@ export class SellerService {
     const userAlreadyExists = await this.findSellerByEmail(email);
 
     if (userAlreadyExists) {
-      throw new HttpException(
-        'This email is already in use',
-        HttpStatus.CONFLICT,
-      );
+      throw new ConflictException('This email is already in use');
     }
 
     let seller = new Seller();
@@ -74,7 +76,7 @@ export class SellerService {
   }
 
   async findSellerWallet(id: string) {
-    const seller = await this.findSellerById(id);
+    const seller = await this.sellerRepository.findOne(id);
 
     return seller.wallet;
   }
