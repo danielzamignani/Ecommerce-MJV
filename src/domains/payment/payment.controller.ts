@@ -7,6 +7,7 @@ import {
   UseGuards,
   UseInterceptors,
   Patch,
+  Inject,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -28,12 +29,18 @@ import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { PaymentService } from './payment.service';
 import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
+import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
+import { ClientProxy } from '@nestjs/microservices';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    @Inject('LOGHTTP-SERVICE')
+    private logHttpService: ClientProxy,
+  ) {}
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiCreatedResponse({ description: 'Create a payment' })
@@ -59,6 +66,15 @@ export class PaymentController {
         return error;
       });
 
+    const logMessage: HttpLogDTO = {
+      url: cieloURLPost,
+      method: 'POST',
+      headers: cieloHeaderConfig,
+      body: cieloPostDTO,
+    };
+
+    this.logHttpService.emit('log', logMessage);
+
     return response.data;
   }
 
@@ -67,7 +83,6 @@ export class PaymentController {
   @ApiBearerAuth('JWT-auth')
   @Patch('validation/:id')
   async validatePayment(@Param('id') id: string) {
-    console.log(`${cieloURLGet}${id}`);
     const response = await axios
       .get(`${cieloURLGet}${id}`, cieloHeaderConfig)
       .then(function (response) {
@@ -78,6 +93,15 @@ export class PaymentController {
       .catch(function (error) {
         return error;
       });
+
+    const logMessage: HttpLogDTO = {
+      url: cieloURLPost,
+      method: 'GET',
+      headers: cieloHeaderConfig,
+      body: {},
+    };
+
+    this.logHttpService.emit('log', logMessage);
 
     const orderId = response.data.MerchantOrderId;
 

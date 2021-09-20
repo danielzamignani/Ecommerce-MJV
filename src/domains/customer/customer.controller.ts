@@ -15,6 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { AuthenticatedUser } from 'src/shared/dtos/authenticatedUser.dto';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
@@ -39,7 +40,7 @@ export class CustomerController {
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/profile')
-  findCustomerById(@DecodeJwt() auth: any) {
+  findCustomerById(@DecodeJwt() auth: AuthenticatedUser) {
     return this.customerService.findCustomerById(auth.id);
   }
 
@@ -48,7 +49,7 @@ export class CustomerController {
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/payments')
-  findCustomerPayments(@DecodeJwt() auth: any) {
+  findCustomerPayments(@DecodeJwt() auth: AuthenticatedUser) {
     return this.customerService.findCustomerPayments(auth.id);
   }
 }

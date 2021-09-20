@@ -15,6 +15,7 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
+import { AuthenticatedUser } from 'src/shared/dtos/authenticatedUser.dto';
 import { SellerGuard } from 'src/shared/guards/seller.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
@@ -39,7 +40,7 @@ export class SellerController {
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
-  findSellerById(@DecodeJwt() auth: any) {
+  findSellerById(@DecodeJwt() auth: AuthenticatedUser) {
     return this.sellerService.findSellerById(auth.id);
   }
 
@@ -48,7 +49,7 @@ export class SellerController {
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('payments')
-  findSellerPayments(@DecodeJwt() auth: any) {
+  findSellerPayments(@DecodeJwt() auth: AuthenticatedUser) {
     return this.sellerService.findSellerPayments(auth.id);
   }
 
@@ -57,7 +58,7 @@ export class SellerController {
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('wallet')
-  findSellerWallet(@DecodeJwt() auth: any) {
+  findSellerWallet(@DecodeJwt() auth: AuthenticatedUser) {
     return this.sellerService.findSellerWallet(auth.id);
   }
 }

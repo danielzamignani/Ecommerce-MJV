@@ -16,7 +16,6 @@ export class SellerStrategy extends PassportStrategy(
   }
 
   async validate(email: string, password: string): Promise<any> {
-    console.log(email, password);
     const user = await this.authService.validateSeller(email, password);
 
     if (!user) {

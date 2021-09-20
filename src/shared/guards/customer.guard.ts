@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import jwt_decode from 'jwt-decode';
-import { AuthenticatedUser } from '../dto/authenticatedUser.dto';
+import { AuthenticatedUser } from '../dtos/authenticatedUser.dto';
 
 @Injectable()
 export class CustomerGuard implements CanActivate {

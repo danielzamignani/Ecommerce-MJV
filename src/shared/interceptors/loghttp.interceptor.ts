@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
+import { HttpLogDTO } from '../dtos/httplog.dto';
 
 @Injectable()
 export class LogHttpInterceptor implements NestInterceptor {
@@ -19,7 +20,7 @@ export class LogHttpInterceptor implements NestInterceptor {
     const url = context.switchToHttp().getRequest().url;
     const headers = context.switchToHttp().getRequest().headers;
     const body = context.switchToHttp().getRequest().body;
-    const logMessage = {
+    const logMessage: HttpLogDTO = {
       url,
       method,
       headers,
