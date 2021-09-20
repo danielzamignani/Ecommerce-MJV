@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 import { Repository } from 'typeorm';
 import { Seller } from './entities/seller.entity';
-import { CreateSellerDTO } from './dto/create-seller.dto';
+import { CreateSellerDTO } from './dtos/create-seller.dto';
 import { Wallet } from './entities/wallet.entity';
 import { Payment } from '../payment/entities/payment.entity';
 

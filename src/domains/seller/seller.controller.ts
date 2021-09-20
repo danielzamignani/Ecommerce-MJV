@@ -19,7 +19,7 @@ import { AuthenticatedUser } from 'src/shared/dtos/authenticatedUser.dto';
 import { SellerGuard } from 'src/shared/guards/seller.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
-import { CreateSellerDTO } from '../seller/dto/create-seller.dto';
+import { CreateSellerDTO } from './dtos/create-seller.dto';
 import { SellerService } from '../seller/seller.service';
 
 @UseInterceptors(LogHttpInterceptor)

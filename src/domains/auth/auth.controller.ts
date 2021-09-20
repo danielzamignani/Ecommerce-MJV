@@ -14,7 +14,7 @@ import {
 } from '@nestjs/swagger';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { AuthService } from './auth.service';
-import { LoginDTO } from './dto/login.dto';
+import { LoginDTO } from './dtos/login.dto';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Login')

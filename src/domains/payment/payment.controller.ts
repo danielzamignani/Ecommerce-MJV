@@ -26,7 +26,7 @@ import {
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
-import { CreatePaymentDTO } from './dto/create-payment.dto';
+import { CreatePaymentDTO } from './dtos/create-payment.dto';
 import { PaymentService } from './payment.service';
 import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';

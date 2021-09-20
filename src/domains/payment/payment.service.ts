@@ -4,12 +4,12 @@ import { Repository } from 'typeorm';
 import { Payment } from './entities/payment.entity';
 import * as uuid from 'uuid';
 import { DebitCard } from './entities/debit-card.entity';
-import { CreateDebitCardDTO } from './dto/create-debit-card.dto';
+import { CreateDebitCardDTO } from './dtos/create-debit-card.dto';
 import { Wallet } from '../seller/entities/wallet.entity';
-import { CreatePaymentDTO } from './dto/create-payment.dto';
+import { CreatePaymentDTO } from './dtos/create-payment.dto';
 import { Transaction } from './entities/transaction.entity';
 import { webHook } from 'src/shared/config/webhook.config';
-import { CieloPostDTO } from './dto/cielo-post.dto';
+import { CieloPostDTO } from './dtos/cielo-post.dto';
 import { Seller } from '../seller/entities/seller.entity';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateCustomerDTO } from './dto/create-customer.dto';
+import { CreateCustomerDTO } from './dtos/create-customer.dto';
 import { Customer } from './entities/customer.entity';
 import * as bcrypt from 'bcrypt';
 import * as uuid from 'uuid';

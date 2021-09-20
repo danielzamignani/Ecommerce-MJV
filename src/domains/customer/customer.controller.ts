@@ -20,7 +20,7 @@ import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CustomerService } from './customer.service';
-import { CreateCustomerDTO } from './dto/create-customer.dto';
+import { CreateCustomerDTO } from './dtos/create-customer.dto';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Customer')
