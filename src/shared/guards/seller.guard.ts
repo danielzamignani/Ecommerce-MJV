@@ -24,6 +24,8 @@ export class SellerGuard implements CanActivate {
       return true;
     }
 
-    throw new UnauthorizedException('This account isnt a Seller account');
+    throw new UnauthorizedException(
+      'This function is restricted for your account type',
+    );
   }
 }

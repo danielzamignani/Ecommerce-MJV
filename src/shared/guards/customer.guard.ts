@@ -24,6 +24,8 @@ export class CustomerGuard implements CanActivate {
       return true;
     }
 
-    throw new UnauthorizedException('This account isnt a Customer account');
+    throw new UnauthorizedException(
+      'This function is restricted for your account type',
+    );
   }
 }
