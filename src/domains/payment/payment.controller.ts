@@ -8,6 +8,7 @@ import {
   UseInterceptors,
   Patch,
   Inject,
+  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,7 +22,7 @@ import {
   cieloHeaderConfig,
   cieloURLGet,
   cieloURLPost,
-} from 'src/common/config/cielo.config';
+} from 'src/shared/config/cielo.config';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
@@ -31,6 +32,7 @@ import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { NotFoundError } from 'rxjs';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')

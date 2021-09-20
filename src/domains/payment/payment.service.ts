@@ -8,7 +8,7 @@ import { CreateDebitCardDTO } from './dto/create-debit-card.dto';
 import { Wallet } from '../seller/entities/wallet.entity';
 import { CreatePaymentDTO } from './dto/create-payment.dto';
 import { Transaction } from './entities/transaction.entity';
-import { webHook } from 'src/common/config/webhook.config';
+import { webHook } from 'src/shared/config/webhook.config';
 import { CieloPostDTO } from './dto/cielo-post.dto';
 import { Seller } from '../seller/entities/seller.entity';
 
