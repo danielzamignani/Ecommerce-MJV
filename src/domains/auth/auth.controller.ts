@@ -15,7 +15,6 @@ import {
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
-import { LocalAuthGuard } from './local/local-auth.guard';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Login')

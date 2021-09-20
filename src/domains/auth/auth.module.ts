@@ -1,13 +1,10 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
-import { CustomerModule } from '../customer/customer.module';
-import { SellerModule } from '../seller/seller.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CustomerStrategy } from './local/customer-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './jwt/constants';
-
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SellerStrategy } from './local/seller-strategy';
 import { Customer } from '../customer/entities/customer.entity';

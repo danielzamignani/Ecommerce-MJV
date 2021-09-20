@@ -11,7 +11,6 @@ import { Transaction } from './entities/transaction.entity';
 import { webHook } from 'src/common/config/webhook.config';
 import { CieloPostDTO } from './dto/cielo-post.dto';
 import { Seller } from '../seller/entities/seller.entity';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class PaymentService {

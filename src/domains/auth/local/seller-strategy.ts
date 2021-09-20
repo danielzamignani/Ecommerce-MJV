@@ -16,11 +16,11 @@ export class SellerStrategy extends PassportStrategy(
   }
 
   async validate(email: string, password: string): Promise<any> {
-    const user = await this.authService.validateSeller(email, password);
+    const seller = await this.authService.validateSeller(email, password);
 
-    if (!user) {
+    if (!seller) {
       throw new UnauthorizedException();
     }
-    return user;
+    return seller;
   }
 }

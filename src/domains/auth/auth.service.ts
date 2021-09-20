@@ -1,20 +1,10 @@
-import {
-  HttpException,
-  HttpStatus,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { CustomerService } from '../customer/customer.service';
-import { SellerService } from '../seller/seller.service';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Customer } from '../customer/entities/customer.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Seller } from '../seller/entities/seller.entity';
 import { Repository } from 'typeorm';
-import { NotFoundError } from 'rxjs';
 
 @Injectable()
 export class AuthService {

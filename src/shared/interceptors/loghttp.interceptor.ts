@@ -20,6 +20,7 @@ export class LogHttpInterceptor implements NestInterceptor {
     const url = context.switchToHttp().getRequest().url;
     const headers = context.switchToHttp().getRequest().headers;
     const body = context.switchToHttp().getRequest().body;
+
     const logMessage: HttpLogDTO = {
       url,
       method,
