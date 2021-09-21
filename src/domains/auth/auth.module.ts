@@ -5,7 +5,6 @@ import { AuthService } from './auth.service';
 import { CustomerStrategy } from './local/customer-strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './jwt/constants';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SellerStrategy } from './local/seller-strategy';
 import { Customer } from '../customer/entities/customer.entity';
 import { Seller } from '../seller/entities/seller.entity';
@@ -19,7 +18,7 @@ import { RabbitModule } from 'src/shared/providers/rabbitMq.module';
     TypeOrmModule.forFeature([Customer, Seller]),
     JwtModule.register({
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '300s' },
+      signOptions: { expiresIn: '1000s' },
     }),
     RabbitModule,
   ],

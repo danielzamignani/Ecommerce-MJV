@@ -1,6 +1,5 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Param,
@@ -13,7 +12,6 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
-  ApiOkResponse,
   ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -31,7 +29,6 @@ import { PaymentService } from './payment.service';
 import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
-import { ClientProxy } from '@nestjs/microservices';
 import { Channel } from 'amqplib';
 import { CieloRequisitonResponseSchema } from 'src/schemas/cieloRequisitionResponse.schema';
 import { validatePaymentResponseSchema } from 'src/schemas/validatePaymentResponse.schema';
@@ -56,6 +53,7 @@ export class PaymentController {
     description: 'Payment requisition created',
     schema: CieloRequisitonResponseSchema,
   })
+  @ApiNotFoundResponse({ description: 'Seller not found' })
   @ApiUnauthorizedResponse({ description: 'Invalid token' })
   @ApiBearerAuth('JWT-auth')
   @Post()
@@ -85,7 +83,7 @@ export class PaymentController {
       body: cieloPostDTO,
     };
 
-    this.publishChannel.sendToQueue(
+    await this.publishChannel.sendToQueue(
       rabbitMqQueue,
       Buffer.from(JSON.stringify(httpLogDTO)),
       {
@@ -111,9 +109,7 @@ export class PaymentController {
     const response = await axios
       .get(`${cieloURLGet}${id}`, cieloHeaderConfig)
       .then(function (response) {
-        if (response.data.Payment.Status === 2) {
-          return response;
-        }
+        return response;
       })
       .catch(function (error) {
         return error;
@@ -136,6 +132,10 @@ export class PaymentController {
 
     const orderId = response.data.MerchantOrderId;
 
-    return this.paymentService.validatePayment(orderId);
+    if (response.data.Payment.Status === 2) {
+      return this.paymentService.approvePayment(orderId);
+    } else {
+      return this.paymentService.refusePayment(orderId);
+    }
   }
 }
