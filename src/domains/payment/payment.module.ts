@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Customer } from '../customer/entities/customer.entity';
 import { Seller } from '../seller/entities/seller.entity';
@@ -22,7 +21,6 @@ import { RabbitModule } from 'src/shared/providers/rabbitMq.module';
       Wallet,
       Transaction,
     ]),
-    HttpModule,
     RabbitModule,
   ],
   controllers: [PaymentController],
