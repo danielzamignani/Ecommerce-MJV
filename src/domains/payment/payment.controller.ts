@@ -22,7 +22,7 @@ import {
   cieloHeaderConfig,
   cieloURLGet,
   cieloURLPost,
-} from 'src/shared/config/cielo.config';
+} from 'src/shared/configs/cielo.config';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
@@ -35,7 +35,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { Channel } from 'amqplib';
 import { CieloRequisitonResponseSchema } from 'src/schemas/cieloRequisitionResponse.schema';
 import { validatePaymentResponseSchema } from 'src/schemas/validatePaymentResponse.schema';
-import { rabbitMqQueue } from 'src/shared/config/rabbitMq.config';
+import { rabbitMqQueue } from 'src/shared/configs/rabbitMq.config';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')

@@ -44,11 +44,11 @@ export class CustomerController {
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiOperation({
-    summary: 'Show customer profile',
-    description: 'Get basic customer informations',
+    summary: "Show customer's profile",
+    description: "Get basic customer's informations",
   })
   @ApiOkResponse({
-    description: 'Return customer profile',
+    description: "Return customer's profile",
     schema: CustomerProfileResponseSchema,
   })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
@@ -60,11 +60,11 @@ export class CustomerController {
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiOperation({
-    summary: 'Show all customer payments',
+    summary: "Show all customer's payments",
     description: 'Get all customer payments',
   })
   @ApiOkResponse({
-    description: 'Return all customer payments',
+    description: "Return all customer's payments",
     schema: GetCustomerPaymentsResponseSchema,
   })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })

@@ -8,7 +8,7 @@ import {
 import { Channel } from 'amqplib';
 
 import { Observable } from 'rxjs';
-import { rabbitMqQueue } from '../config/rabbitMq.config';
+import { rabbitMqQueue } from '../configs/rabbitMq.config';
 import { HttpLogDTO } from '../dtos/httplog.dto';
 
 @Injectable()

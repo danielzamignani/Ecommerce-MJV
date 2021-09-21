@@ -5,7 +5,7 @@ import {
   rabbitMqPort,
   rabbitMqQueue,
   rabbitMqUsername,
-} from '../config/rabbitMq.config';
+} from '../configs/rabbitMq.config';
 
 async function createConnection() {
   try {
