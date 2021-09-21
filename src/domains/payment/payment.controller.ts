@@ -14,6 +14,7 @@ import {
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -31,16 +32,31 @@ import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { Channel } from 'amqplib';
+import { CieloRequisitonResponseSchema } from 'src/schemas/cieloRequisitionResponse.schema';
+import { validatePaymentResponseSchema } from 'src/schemas/validatePaymentResponse.schema';
+import { rabbitMqQueue } from 'src/shared/config/rabbitMq.config';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentService: PaymentService,
+    @Inject('RABBIT_PUBLISH_CHANNEL')
+    private readonly publishChannel: Channel,
+  ) {}
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
-  @ApiCreatedResponse({ description: 'Create a payment' })
-  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
+  @ApiOperation({
+    summary: 'Create a payment requisition',
+    description: 'Create a payment and send to CieloAPI',
+  })
+  @ApiCreatedResponse({
+    description: 'Payment requisition created',
+    schema: CieloRequisitonResponseSchema,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid token' })
   @ApiBearerAuth('JWT-auth')
   @Post()
   async createPayment(
@@ -62,20 +78,33 @@ export class PaymentController {
         return error;
       });
 
-    const logMessage: HttpLogDTO = {
+    const httpLogDTO: HttpLogDTO = {
       url: cieloURLPost,
       method: 'POST',
       headers: cieloHeaderConfig,
       body: cieloPostDTO,
     };
 
-    //  this.logHttpService.emit('log', logMessage);
+    this.publishChannel.sendToQueue(
+      rabbitMqQueue,
+      Buffer.from(JSON.stringify(httpLogDTO)),
+      {
+        persistent: true,
+      },
+    );
 
     return response.data;
   }
 
-  @ApiCreatedResponse({ description: 'Validate the payment' })
-  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
+  @ApiOperation({
+    summary: 'Confirm payment requisition',
+    description: 'Confirm payment and add amount to seller wallet',
+  })
+  @ApiCreatedResponse({
+    description: 'Payment confirmed',
+    schema: validatePaymentResponseSchema,
+  })
+  @ApiUnauthorizedResponse({ description: 'Invalid token' })
   @ApiBearerAuth('JWT-auth')
   @Patch('validation/:id')
   async validatePayment(@Param('id') id: string) {
@@ -90,27 +119,23 @@ export class PaymentController {
         return error;
       });
 
-    const logMessage: HttpLogDTO = {
+    const httpLogDTO: HttpLogDTO = {
       url: cieloURLPost,
       method: 'GET',
       headers: cieloHeaderConfig,
       body: {},
     };
 
-    //this.logHttpService.emit('log', logMessage);
+    this.publishChannel.sendToQueue(
+      rabbitMqQueue,
+      Buffer.from(JSON.stringify(httpLogDTO)),
+      {
+        persistent: true,
+      },
+    );
 
     const orderId = response.data.MerchantOrderId;
 
     return this.paymentService.validatePayment(orderId);
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ description: 'Find payment by ID' })
-  @ApiUnauthorizedResponse({ description: 'Invalid Token' })
-  @ApiNotFoundResponse({ description: 'Payment Not Found!' })
-  @ApiBearerAuth('JWT-auth')
-  @Get(':id')
-  findPaymentById(@Param('id') id: string) {
-    return this.paymentService.findPaymentById(id);
   }
 }

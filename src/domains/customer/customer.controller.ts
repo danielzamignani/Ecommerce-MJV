@@ -11,9 +11,12 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { CustomerProfileResponseSchema } from 'src/schemas/customerProfileResponse. schema';
+import { GetCustomerPaymentsResponseSchema } from 'src/schemas/getCustomerPaymentsResponse.schema';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { AuthenticatedUser } from 'src/shared/dtos/authenticatedUser.dto';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
@@ -28,7 +31,11 @@ import { CreateCustomerDTO } from './dtos/create-customer.dto';
 export class CustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
-  @ApiCreatedResponse({ description: 'Create a customer account' })
+  @ApiOperation({
+    summary: 'Create a customer account',
+    description: 'Create a customer account in API',
+  })
+  @ApiCreatedResponse({ description: 'Customer account created' })
   @ApiConflictResponse({ description: 'Email already in use' })
   @Post()
   createCustomer(@Body() createCustomerDTO: CreateCustomerDTO) {
@@ -36,7 +43,14 @@ export class CustomerController {
   }
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
-  @ApiOkResponse({ description: 'Show customer profile' })
+  @ApiOperation({
+    summary: 'Show customer profile',
+    description: 'Get basic customer informations',
+  })
+  @ApiOkResponse({
+    description: 'Return customer profile',
+    schema: CustomerProfileResponseSchema,
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/profile')
@@ -45,7 +59,14 @@ export class CustomerController {
   }
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
-  @ApiOkResponse({ description: 'Show all customer payments' })
+  @ApiOperation({
+    summary: 'Show all customer payments',
+    description: 'Get all customer payments',
+  })
+  @ApiOkResponse({
+    description: 'Return all customer payments',
+    schema: GetCustomerPaymentsResponseSchema,
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('/payments')

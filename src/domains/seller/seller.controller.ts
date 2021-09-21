@@ -11,6 +11,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -21,6 +22,9 @@ import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor'
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreateSellerDTO } from './dtos/create-seller.dto';
 import { SellerService } from '../seller/seller.service';
+import { SellerProfileResponseSchema } from 'src/schemas/sellerProfileResponse.schema';
+import { GetSellerPaymentsResponseSchema } from 'src/schemas/getSellerPaymentsResponse.schema';
+import { SellerWalletResponse } from 'src/schemas/sellerWalletResponse.schema';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Seller')
@@ -28,7 +32,11 @@ import { SellerService } from '../seller/seller.service';
 export class SellerController {
   constructor(private readonly sellerService: SellerService) {}
 
-  @ApiCreatedResponse({ description: 'Create a customer account' })
+  @ApiOperation({
+    summary: 'Create a seller account',
+    description: 'Create a seller account in API',
+  })
+  @ApiCreatedResponse({ description: 'Seller account created' })
   @ApiConflictResponse({ description: 'Email already in use' })
   @Post()
   createSeller(@Body() createSellerDTO: CreateSellerDTO) {
@@ -36,7 +44,14 @@ export class SellerController {
   }
 
   @UseGuards(JwtAuthGuard, SellerGuard)
-  @ApiOkResponse({ description: 'Show seller profile' })
+  @ApiOperation({
+    summary: "Show seller's profile",
+    description: "Get basic seller's informations",
+  })
+  @ApiOkResponse({
+    description: "Return seller's profile",
+    schema: SellerProfileResponseSchema,
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
@@ -45,7 +60,14 @@ export class SellerController {
   }
 
   @UseGuards(JwtAuthGuard, SellerGuard)
-  @ApiOkResponse({ description: 'Show all seller payments' })
+  @ApiOperation({
+    summary: "Show all seller's payments",
+    description: "Get all seller's payments",
+  })
+  @ApiOkResponse({
+    description: 'Return all seller payments',
+    schema: GetSellerPaymentsResponseSchema,
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('payments')
@@ -54,7 +76,14 @@ export class SellerController {
   }
 
   @UseGuards(JwtAuthGuard, SellerGuard)
-  @ApiOkResponse({ description: 'Show seller wallet' })
+  @ApiOperation({
+    summary: "Show seller's wallet",
+    description: "Get the seller's wallet",
+  })
+  @ApiOkResponse({
+    description: "Return seller's wallet",
+    schema: SellerWalletResponse,
+  })
   @ApiUnauthorizedResponse({ description: 'Invalid Token' })
   @ApiBearerAuth('JWT-auth')
   @Get('wallet')

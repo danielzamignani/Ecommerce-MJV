@@ -8,6 +8,7 @@ import {
 import { Channel } from 'amqplib';
 
 import { Observable } from 'rxjs';
+import { rabbitMqQueue } from '../config/rabbitMq.config';
 import { HttpLogDTO } from '../dtos/httplog.dto';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class LogHttpInterceptor implements NestInterceptor {
     };
 
     this.publishChannel.sendToQueue(
-      'loghttp',
+      rabbitMqQueue,
       Buffer.from(JSON.stringify(httpLogDTO)),
       {
         persistent: true,

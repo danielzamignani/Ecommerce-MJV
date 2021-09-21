@@ -11,6 +11,7 @@ import { Transaction } from './entities/transaction.entity';
 import { webHook } from 'src/shared/config/webhook.config';
 import { CieloPostDTO } from './dtos/cielo-post.dto';
 import { Seller } from '../seller/entities/seller.entity';
+import { Customer } from '../customer/entities/customer.entity';
 
 @Injectable()
 export class PaymentService {
@@ -96,7 +97,7 @@ export class PaymentService {
 
   async validatePayment(id: string) {
     /**Mudando o status do pagamento*/
-    let payment = await this.findPaymentById(id);
+    let payment = await this.paymentRepository.findOne(id);
     payment.status = 'Approved';
 
     payment = await this.paymentRepository.save(payment);
@@ -111,7 +112,9 @@ export class PaymentService {
 
     await this.createTransaction(payment.amount, payment.orderId, sellerWallet);
 
-    return payment;
+    const { customer, seller, debitCard, ...paymentReturn } = payment;
+
+    return paymentReturn;
   }
 
   async createTransaction(amount: number, orderId: string, wallet: Wallet) {
@@ -127,15 +130,5 @@ export class PaymentService {
     });
 
     this.transactionRepository.save(transaction);
-  }
-
-  async findPaymentById(id: string) {
-    const payment = await this.paymentRepository.findOne(id);
-
-    if (!payment) {
-      throw new NotFoundException('Payment Not Found!');
-    }
-
-    return payment;
   }
 }

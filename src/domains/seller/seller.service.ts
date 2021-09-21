@@ -18,7 +18,9 @@ export class SellerService {
   private readonly paymentRepository: Repository<Payment>;
 
   async createSeller({ name, email, password }: CreateSellerDTO) {
-    const userAlreadyExists = await this.findSellerByEmail(email);
+    const userAlreadyExists = await this.sellerRepository.findOne({
+      where: { email: email },
+    });
 
     if (userAlreadyExists) {
       throw new ConflictException('This email is already in use');
@@ -51,21 +53,19 @@ export class SellerService {
       where: { seller: seller },
     });
 
-    return payments;
+    const paymentsReturn = payments.map(
+      ({ seller, customer, debitCard, ...paymentsReturn }) => paymentsReturn,
+    );
+
+    return paymentsReturn;
   }
 
   async findSellerById(id: string) {
     const seller = await this.sellerRepository.findOne(id);
 
-    return seller;
-  }
+    const { password, wallet, ...sellerReturn } = seller;
 
-  async findSellerByEmail(email: string) {
-    const seller = await this.sellerRepository.findOne({
-      where: { email: email },
-    });
-
-    return seller;
+    return sellerReturn;
   }
 
   async findSellerWallet(id: string) {

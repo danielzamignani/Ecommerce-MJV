@@ -1,17 +1,25 @@
 import { connect, Connection, Channel } from 'amqplib';
+import {
+  rabbitMqHost,
+  rabbitMqPassword,
+  rabbitMqPort,
+  rabbitMqQueue,
+  rabbitMqUsername,
+} from '../config/rabbitMq.config';
 
 async function createConnection() {
   try {
     const connection = await connect({
-      hostname: 'localhost',
+      hostname: rabbitMqHost,
       locale: 'pt-br',
-      port: 5672,
-      username: 'admin',
-      password: 'admin',
+      port: rabbitMqPort,
+      username: rabbitMqUsername,
+      password: rabbitMqPassword,
     });
     return connection;
   } catch (err) {
     console.log(err);
+    process.exit(-1);
   }
 }
 
@@ -22,15 +30,17 @@ async function createPublishChannel(connection: Connection) {
     publishChannel = await connection.createChannel();
   } catch (err) {
     console.log(err);
+    process.exit(-1);
   }
 
   try {
-    await publishChannel.assertQueue('loghttp', {
+    await publishChannel.assertQueue(rabbitMqQueue, {
       durable: true,
       autoDelete: false,
     });
   } catch (err) {
     console.log(err);
+    process.exit(-1);
   }
 
   return publishChannel;

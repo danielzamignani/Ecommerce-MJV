@@ -15,7 +15,9 @@ export class CustomerService {
   private readonly paymentRepository: Repository<Payment>;
 
   async createCustomer({ name, email, password }: CreateCustomerDTO) {
-    const userAlreadyExists = await this.findCustomerByEmail(email);
+    const userAlreadyExists = await this.customerRepository.findOne({
+      where: { email: email },
+    });
 
     if (userAlreadyExists) {
       throw new ConflictException('This email is already in use');
@@ -39,7 +41,9 @@ export class CustomerService {
   async findCustomerById(id: string) {
     const customer = await this.customerRepository.findOne(id);
 
-    return customer;
+    const { password, accountType, ...customerReturn } = customer;
+
+    return customerReturn;
   }
 
   async findCustomerPayments(id: string) {
@@ -49,14 +53,10 @@ export class CustomerService {
       where: { customer: customer },
     });
 
-    return payments;
-  }
+    const paymentsReturn = payments.map(
+      ({ seller, customer, ...paymentsReturn }) => paymentsReturn,
+    );
 
-  async findCustomerByEmail(email: string) {
-    const customer = await this.customerRepository.findOne({
-      where: { email: email },
-    });
-
-    return customer;
+    return paymentsReturn;
   }
 }
