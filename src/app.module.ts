@@ -5,6 +5,7 @@ import { getConnectionOptions } from 'typeorm';
 import { CustomerModule } from './domains/customer/customer.module';
 import { PaymentModule } from './domains/payment/payment.module';
 import { SellerModule } from './domains/seller/seller.module';
+import { RabbitModule } from './shared/providers/rabbitMq.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SellerModule } from './domains/seller/seller.module';
     PaymentModule,
     SellerModule,
     ClientsModule,
+    RabbitModule,
   ],
   controllers: [],
   providers: [],

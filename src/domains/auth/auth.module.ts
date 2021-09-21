@@ -11,6 +11,7 @@ import { Customer } from '../customer/entities/customer.entity';
 import { Seller } from '../seller/entities/seller.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt/jwt-strategy';
+import { RabbitModule } from 'src/shared/providers/rabbitMq.module';
 
 @Module({
   imports: [
@@ -20,21 +21,7 @@ import { JwtStrategy } from './jwt/jwt-strategy';
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '300s' },
     }),
-    ClientsModule.register([
-      {
-        name: 'LOGHTTP-SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://admin:admin@localhost:5672'],
-          prefetchCount: 1,
-          queue: 'loghttp',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
-      },
-    ]),
+    RabbitModule,
   ],
   providers: [AuthService, CustomerStrategy, SellerStrategy, JwtStrategy],
   controllers: [AuthController],

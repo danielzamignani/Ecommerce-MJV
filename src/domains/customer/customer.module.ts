@@ -6,27 +6,13 @@ import { Payment } from '../payment/entities/payment.entity';
 import { Seller } from '../seller/entities/seller.entity';
 import { CustomerController } from './customer.controller';
 import { AuthModule } from '../auth/auth.module';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { RabbitModule } from 'src/shared/providers/rabbitMq.module';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'LOGHTTP-SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: ['amqp://admin:admin@localhost:5672'],
-          prefetchCount: 1,
-          queue: 'loghttp',
-          noAck: false,
-          queueOptions: {
-            durable: true,
-          },
-        },
-      },
-    ]),
     TypeOrmModule.forFeature([Customer, Payment, Seller]),
     forwardRef(() => AuthModule),
+    RabbitModule,
   ],
   controllers: [CustomerController],
   providers: [CustomerService],

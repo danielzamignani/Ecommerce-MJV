@@ -22,7 +22,8 @@ export class CreatePaymentDTO {
 
   @ApiProperty({
     description: 'Cartão de Debito',
-    example: 'Infos do cartão',
+    example:
+      '{holder: Daniel Zamignani brand: Visa cardNumber: 4929465240388137 expirationDate: 13/06/2023 securityCode: 123}',
   })
   debitCard: CreateDebitCardDTO;
 }

@@ -8,7 +8,6 @@ import {
   UseInterceptors,
   Patch,
   Inject,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -32,17 +31,12 @@ import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
 import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
 import { ClientProxy } from '@nestjs/microservices';
-import { NotFoundError } from 'rxjs';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
 @Controller('payment')
 export class PaymentController {
-  constructor(
-    private readonly paymentService: PaymentService,
-    @Inject('LOGHTTP-SERVICE')
-    private logHttpService: ClientProxy,
-  ) {}
+  constructor(private readonly paymentService: PaymentService) {}
 
   @UseGuards(JwtAuthGuard, CustomerGuard)
   @ApiCreatedResponse({ description: 'Create a payment' })
@@ -75,7 +69,7 @@ export class PaymentController {
       body: cieloPostDTO,
     };
 
-    this.logHttpService.emit('log', logMessage);
+    //  this.logHttpService.emit('log', logMessage);
 
     return response.data;
   }
@@ -103,7 +97,7 @@ export class PaymentController {
       body: {},
     };
 
-    this.logHttpService.emit('log', logMessage);
+    //this.logHttpService.emit('log', logMessage);
 
     const orderId = response.data.MerchantOrderId;
 

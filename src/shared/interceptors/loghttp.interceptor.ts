@@ -5,15 +5,16 @@ import {
   CallHandler,
   Inject,
 } from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
+import { Channel } from 'amqplib';
+
 import { Observable } from 'rxjs';
 import { HttpLogDTO } from '../dtos/httplog.dto';
 
 @Injectable()
 export class LogHttpInterceptor implements NestInterceptor {
   constructor(
-    @Inject('LOGHTTP-SERVICE')
-    private logHttpService: ClientProxy,
+    @Inject('RABBIT_PUBLISH_CHANNEL')
+    private readonly publishChannel: Channel,
   ) {}
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const method = context.switchToHttp().getRequest().method;
@@ -21,14 +22,20 @@ export class LogHttpInterceptor implements NestInterceptor {
     const headers = context.switchToHttp().getRequest().headers;
     const body = context.switchToHttp().getRequest().body;
 
-    const logMessage: HttpLogDTO = {
+    const httpLogDTO: HttpLogDTO = {
       url,
       method,
       headers,
       body,
     };
 
-    this.logHttpService.emit('log', logMessage);
+    this.publishChannel.sendToQueue(
+      'loghttp',
+      Buffer.from(JSON.stringify(httpLogDTO)),
+      {
+        persistent: true,
+      },
+    );
 
     return next.handle().pipe();
   }

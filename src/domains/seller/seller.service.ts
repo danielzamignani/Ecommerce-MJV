@@ -24,7 +24,7 @@ export class SellerService {
       throw new ConflictException('This email is already in use');
     }
 
-    let seller = new Seller();
+    const seller = new Seller();
 
     const id = uuid.v4();
 
@@ -41,9 +41,7 @@ export class SellerService {
       wallet,
     });
 
-    seller = await this.sellerRepository.save(seller);
-
-    return seller;
+    await this.sellerRepository.save(seller);
   }
 
   async findSellerPayments(id: string) {

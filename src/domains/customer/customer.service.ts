@@ -21,7 +21,7 @@ export class CustomerService {
       throw new ConflictException('This email is already in use');
     }
 
-    let customer = new Customer();
+    const customer = new Customer();
 
     const saltOrRounds = 10;
     password = await bcrypt.hash(password, saltOrRounds);
@@ -33,9 +33,7 @@ export class CustomerService {
       password,
     });
 
-    customer = await this.customerRepository.save(customer);
-
-    return customer;
+    await this.customerRepository.save(customer);
   }
 
   async findCustomerById(id: string) {
