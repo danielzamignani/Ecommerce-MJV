@@ -1,4 +1,10 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Payment } from './entities/payment.entity';
@@ -36,7 +42,7 @@ export class PaymentService {
   @Inject('RABBIT_PUBLISH_CHANNEL')
   private readonly publishChannel: Channel;
   async createPayment(
-    { amount, debitCard, sellerId, customerName }: CreatePaymentDTO,
+    { amount, debitCard, sellerId }: CreatePaymentDTO,
     customerId: string,
   ) {
     /**Verificando o vendedor */
@@ -105,14 +111,33 @@ export class PaymentService {
       },
     };
 
+    console.log(cieloPostDTO);
+
     const response = await axios
       .post(cieloURLPost, cieloPostDTO, cieloHeaderConfig)
       .then(function (response) {
         return response;
       })
       .catch(function (error) {
-        console.log(error);
-        throw new Error();
+        switch (error.response.data[0].Code) {
+          case 126:
+            throw new UnprocessableEntityException(
+              'Debit Card Expiration Date is invalid',
+            );
+          case 146:
+            throw new UnprocessableEntityException(
+              'SecurityCode length exceeded',
+            );
+          case 300:
+            throw new UnprocessableEntityException(
+              'SecurityCode length must be longer than 2 characters',
+            );
+          default:
+            throw new HttpException(
+              error.response.data[0],
+              error.response.status,
+            );
+        }
       });
 
     const httpLogDTO: HttpLogDTO = {
@@ -140,7 +165,7 @@ export class PaymentService {
         return response;
       })
       .catch(function (error) {
-        throw new error();
+        throw new HttpException('Payment Not Found', error.response.status);
       });
 
     const httpLogDTO: HttpLogDTO = {
