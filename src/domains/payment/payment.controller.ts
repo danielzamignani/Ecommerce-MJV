@@ -16,23 +16,15 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import {
-  cieloHeaderConfig,
-  cieloURLGet,
-  cieloURLPost,
-} from 'src/shared/configs/cielo.config';
 import { DecodeJwt } from 'src/shared/decorators/decode-jwt.decortator';
 import { LogHttpInterceptor } from 'src/shared/interceptors/loghttp.interceptor';
 import { JwtAuthGuard } from '../auth/jwt/jwt-strategy.guard';
 import { CreatePaymentDTO } from './dtos/create-payment.dto';
 import { PaymentService } from './payment.service';
-import axios from 'axios';
 import { CustomerGuard } from 'src/shared/guards/customer.guard';
-import { HttpLogDTO } from 'src/shared/dtos/httplog.dto';
 import { Channel } from 'amqplib';
 import { CieloRequisitonResponseSchema } from 'src/schemas/cieloRequisitionResponse.schema';
 import { validatePaymentResponseSchema } from 'src/schemas/validatePaymentResponse.schema';
-import { rabbitMqQueue } from 'src/shared/configs/rabbitMq.config';
 
 @UseInterceptors(LogHttpInterceptor)
 @ApiTags('Payment')
@@ -61,37 +53,7 @@ export class PaymentController {
     @Body() createPaymentDTO: CreatePaymentDTO,
     @DecodeJwt() auth: any,
   ) {
-    const cieloPostDTO = await this.paymentService
-      .createPayment(createPaymentDTO, auth.id)
-      .then(function (cieloPostDTO) {
-        return cieloPostDTO;
-      });
-
-    const response = await axios
-      .post(cieloURLPost, cieloPostDTO, cieloHeaderConfig)
-      .then(function (response) {
-        return response;
-      })
-      .catch(function (error) {
-        return error;
-      });
-
-    const httpLogDTO: HttpLogDTO = {
-      url: cieloURLPost,
-      method: 'POST',
-      headers: cieloHeaderConfig,
-      body: cieloPostDTO,
-    };
-
-    await this.publishChannel.sendToQueue(
-      rabbitMqQueue,
-      Buffer.from(JSON.stringify(httpLogDTO)),
-      {
-        persistent: true,
-      },
-    );
-
-    return response.data;
+    return await this.paymentService.createPayment(createPaymentDTO, auth.id);
   }
 
   @ApiOperation({
@@ -106,36 +68,6 @@ export class PaymentController {
   @ApiBearerAuth('JWT-auth')
   @Patch('validation/:id')
   async validatePayment(@Param('id') id: string) {
-    const response = await axios
-      .get(`${cieloURLGet}${id}`, cieloHeaderConfig)
-      .then(function (response) {
-        return response;
-      })
-      .catch(function (error) {
-        return error;
-      });
-
-    const httpLogDTO: HttpLogDTO = {
-      url: cieloURLPost,
-      method: 'GET',
-      headers: cieloHeaderConfig,
-      body: {},
-    };
-
-    this.publishChannel.sendToQueue(
-      rabbitMqQueue,
-      Buffer.from(JSON.stringify(httpLogDTO)),
-      {
-        persistent: true,
-      },
-    );
-
-    const orderId = response.data.MerchantOrderId;
-
-    if (response.data.Payment.Status === 2) {
-      return this.paymentService.approvePayment(orderId);
-    } else {
-      return this.paymentService.refusePayment(orderId);
-    }
+    return await this.paymentService.validatePayment(id);
   }
 }

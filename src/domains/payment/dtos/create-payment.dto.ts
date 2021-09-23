@@ -26,7 +26,7 @@ export class CreatePaymentDTO {
       holder: 'Vinicius Anderson da Conceição',
       brand: 'Visa',
       cardNumber: '4929465240388137',
-      expirationDate: '13/06/2023',
+      expirationDate: '06/2023',
       securityCode: '123',
     },
   })

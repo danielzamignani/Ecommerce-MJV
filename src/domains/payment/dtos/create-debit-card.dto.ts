@@ -21,7 +21,7 @@ export class CreateDebitCardDTO {
 
   @ApiProperty({
     description: 'Validade do cartão',
-    example: '13/06/2023',
+    example: '06/2023',
   })
   expirationDate: string;
 
