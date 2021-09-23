@@ -13,3 +13,30 @@ services:
       - POSTGRES_PASSWORD=docker
       - POSTGRES_DB=postgres_sql
       - TZ=America/SaoPaulo
+
+  log_postgres:
+    image: postgres:alpine
+    container_name: log-postgres
+    ports:
+      - 5433:5432
+    volumes:
+      - ./DOCKER-VOLUMES/postgresql_log/postgre-data:/var/lib/postgresql
+      - ./DOCKER-VOLUMES/postgresql_log/postgre-data/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=log
+      - POSTGRES_PASSWORD=docker
+      - POSTGRES_DB=log_postgres
+      - TZ=America/SaoPaulo
+
+  rabbitmq:
+    container_name: ecommerce-rabbitmq
+    image: rabbitmq:3.8-management
+    hostname: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    volumes:
+      - ./DOCKER-VOLUMES/rabbitmq:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
